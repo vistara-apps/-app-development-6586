@@ -7,6 +7,8 @@ import { GeneticAnalysisLoader, LoadingButton } from '../components/LoadingState
 import { FloatingInput, FloatingSelect, FileUpload, StepIndicator } from '../components/FormComponents';
 import { useFormValidation, validateRequired, validateAge, validateWeight, validateHeight } from '../components/ValidationMessage';
 import ProgressBar from '../components/ProgressBar';
+import AnalysisAssistant from '../components/chat/AnalysisAssistant';
+import GeneticExplainer from '../components/GeneticExplainer';
 
 const Analysis = () => {
   const { user, updateUser, addRecommendations } = useUser();
@@ -95,7 +97,10 @@ const Analysis = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2">
       {/* Progress Steps */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -335,6 +340,21 @@ const Analysis = () => {
             </div>
           </div>
         )}
+      </div>
+        </div>
+
+        {/* Sidebar with Conversational Assistant */}
+        <div className="lg:col-span-1 space-y-6">
+          <AnalysisAssistant 
+            geneticData={user?.geneticData} 
+            currentStep={step}
+          />
+          
+          {/* Show genetic explainer if genetic data is available */}
+          {user?.geneticData && (
+            <GeneticExplainer geneticData={user.geneticData} />
+          )}
+        </div>
       </div>
     </div>
   );
