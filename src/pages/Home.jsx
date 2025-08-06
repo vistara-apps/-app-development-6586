@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dna, Heart, Brain, Zap, Shield, Users, ArrowRight } from 'lucide-react';
+import OnboardingFlow from '../components/OnboardingFlow';
+import AccessibleButton from '../components/AccessibleButton';
 
 const Home = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const handleOnboardingComplete = (preferences) => {
+    console.log('Onboarding completed with preferences:', preferences);
+    // Here you would typically save the preferences to user context or backend
+  };
   const features = [
     {
       icon: <Dna className="h-8 w-8 text-gene-600" />,
@@ -51,10 +59,15 @@ const Home = () => {
               AI-powered genetic analysis for personalized health and wellness recommendations tailored specifically to your DNA.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/analysis" className="btn-primary bg-white text-gene-600 hover:bg-gray-100">
-                Start Your Analysis
+              <AccessibleButton
+                onClick={() => setShowOnboarding(true)}
+                variant="primary"
+                className="bg-white text-gene-600 hover:bg-gray-100"
+                ariaLabel="Start your genetic analysis journey"
+              >
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+              </AccessibleButton>
               <Link to="/subscription" className="btn-secondary bg-transparent border-2 border-white text-white hover:bg-white hover:text-gene-600">
                 View Plans
               </Link>
@@ -153,12 +166,25 @@ const Home = () => {
           <p className="text-xl mb-8 opacity-90">
             Start your personalized health journey today with our comprehensive genetic analysis.
           </p>
-          <Link to="/analysis" className="btn-primary bg-white text-gene-600 hover:bg-gray-100 text-lg px-8 py-4">
+          <AccessibleButton
+            onClick={() => setShowOnboarding(true)}
+            variant="primary"
+            size="lg"
+            className="bg-white text-gene-600 hover:bg-gray-100 text-lg px-8 py-4"
+            ariaLabel="Start your personalized health journey"
+          >
             Get Started Now
             <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
+          </AccessibleButton>
         </div>
       </section>
+
+      {/* Onboarding Flow */}
+      <OnboardingFlow
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };
