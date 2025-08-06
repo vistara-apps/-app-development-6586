@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Dna, Heart, Brain, Zap, Shield, Users, ArrowRight } from 'lucide-react';
 import OnboardingFlow from '../components/OnboardingFlow';
 import AccessibleButton from '../components/AccessibleButton';
+import InteractiveDemo from '../components/InteractiveDemo';
+import ConversationalFAQ from '../components/ConversationalFAQ';
 
 const Home = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -157,6 +159,28 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Interactive Demo Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Experience Our AI Assistant
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              See how our conversational AI can guide you through your genetic health journey
+            </p>
+          </div>
+          <InteractiveDemo />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ConversationalFAQ />
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gene-600 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -164,7 +188,7 @@ const Home = () => {
             Ready to Discover Your Genetic Potential?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Start your personalized health journey today with our comprehensive genetic analysis.
+            Start your personalized health journey today with our comprehensive genetic analysis and AI guidance.
           </p>
           <AccessibleButton
             onClick={() => setShowOnboarding(true)}
