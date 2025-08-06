@@ -3,6 +3,10 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { Upload, FileText, AlertCircle, CheckCircle, Loader, Dna } from 'lucide-react';
 import { AIService } from '../services/aiService';
+import { GeneticAnalysisLoader, LoadingButton } from '../components/LoadingStates';
+import { FloatingInput, FloatingSelect, FileUpload, StepIndicator } from '../components/FormComponents';
+import { useFormValidation, validateRequired, validateAge, validateWeight, validateHeight } from '../components/ValidationMessage';
+import ProgressBar from '../components/ProgressBar';
 
 const Analysis = () => {
   const { user, updateUser, addRecommendations } = useUser();
