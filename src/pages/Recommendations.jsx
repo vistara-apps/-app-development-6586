@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
-import { Heart, Zap, Brain, ChevronDown, ChevronUp, Clock, Target, AlertTriangle } from 'lucide-react';
+import { Heart, Zap, Brain, ChevronDown, ChevronUp, Clock, Target, AlertTriangle, Dna, Shield } from 'lucide-react';
+import GeneticInsights from '../components/GeneticInsights';
+import RiskVisualization from '../components/RiskVisualization';
 
 const Recommendations = () => {
   const { user } = useUser();
@@ -17,7 +19,9 @@ const Recommendations = () => {
   const tabs = [
     { id: 'nutrition', label: 'Nutrition', icon: <Heart className="h-5 w-5" />, color: 'text-red-600' },
     { id: 'fitness', label: 'Fitness', icon: <Zap className="h-5 w-5" />, color: 'text-yellow-600' },
-    { id: 'wellness', label: 'Wellness', icon: <Brain className="h-5 w-5" />, color: 'text-purple-600' }
+    { id: 'wellness', label: 'Wellness', icon: <Brain className="h-5 w-5" />, color: 'text-purple-600' },
+    { id: 'genetics', label: 'Genetic Insights', icon: <Dna className="h-5 w-5" />, color: 'text-blue-600' },
+    { id: 'risks', label: 'Risk Assessment', icon: <Shield className="h-5 w-5" />, color: 'text-indigo-600' }
   ];
 
   const renderNutritionTab = () => {
@@ -33,6 +37,42 @@ const Recommendations = () => {
 
     return (
       <div className="space-y-6">
+        {/* Key Genetic Insights */}
+        {nutrition.keyInsights && nutrition.keyInsights.length > 0 && (
+          <div className="card bg-blue-50 border-blue-200">
+            <h3 className="text-xl font-semibold text-blue-900 mb-4 flex items-center">
+              <Dna className="h-5 w-5 text-blue-600 mr-2" />
+              Key Genetic Insights
+            </h3>
+            <div className="space-y-2">
+              {nutrition.keyInsights.map((insight, index) => (
+                <div key={index} className="flex items-start space-x-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <p className="text-blue-800 text-sm">{insight}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Risk Mitigation */}
+        {nutrition.riskMitigation && nutrition.riskMitigation.length > 0 && (
+          <div className="card bg-orange-50 border-orange-200">
+            <h3 className="text-xl font-semibold text-orange-900 mb-4 flex items-center">
+              <Shield className="h-5 w-5 text-orange-600 mr-2" />
+              Risk Mitigation Strategies
+            </h3>
+            <div className="space-y-2">
+              {nutrition.riskMitigation.map((strategy, index) => (
+                <div key={index} className="flex items-start space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                  <p className="text-orange-800 text-sm">{strategy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Recommended Foods */}
         <div className="card">
           <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
@@ -48,7 +88,15 @@ const Recommendations = () => {
                     {item.frequency}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600">{item.reason}</p>
+                <p className="text-sm text-gray-600 mb-2">{item.reason}</p>
+                {item.geneticBasis && (
+                  <div className="flex items-center space-x-1">
+                    <Dna className="h-3 w-3 text-blue-500" />
+                    <span className="text-xs text-blue-600 font-medium">
+                      Based on: {item.geneticBasis}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -64,7 +112,15 @@ const Recommendations = () => {
             {nutrition.avoidFoods?.map((item, index) => (
               <div key={index} className="p-4 border border-red-200 bg-red-50 rounded-lg">
                 <h4 className="font-medium text-red-900 mb-1">{item.food}</h4>
-                <p className="text-sm text-red-700">{item.reason}</p>
+                <p className="text-sm text-red-700 mb-2">{item.reason}</p>
+                {item.geneticBasis && (
+                  <div className="flex items-center space-x-1">
+                    <Dna className="h-3 w-3 text-red-500" />
+                    <span className="text-xs text-red-600 font-medium">
+                      Based on: {item.geneticBasis}
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -78,7 +134,18 @@ const Recommendations = () => {
               <div key={index} className="p-4 border border-blue-200 bg-blue-50 rounded-lg">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="font-medium text-blue-900">{item.supplement}</h4>
-                  <span className="text-sm font-medium text-blue-700">{item.dosage}</span>
+                  <div className="text-right">
+                    <span className="text-sm font-medium text-blue-700">{item.dosage}</span>
+                    {item.priority && (
+                      <div className={`text-xs px-2 py-1 rounded mt-1 ${
+                        item.priority === 'high' ? 'bg-red-100 text-red-800' :
+                        item.priority === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {item.priority} priority
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="text-sm text-blue-700">{item.reason}</p>
               </div>
@@ -260,6 +327,51 @@ const Recommendations = () => {
     );
   };
 
+  const renderGeneticsTab = () => {
+    const genetics = user.recommendations.nutrition?.geneticProfile;
+    const riskAssessment = user.recommendations.nutrition?.riskAssessment;
+    
+    if (!genetics) {
+      return (
+        <div className="text-center py-12">
+          <Dna className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">No genetic analysis data available yet. Complete your genetic analysis first.</p>
+        </div>
+      );
+    }
+
+    return (
+      <GeneticInsights 
+        geneticProfile={genetics}
+        riskAssessment={riskAssessment}
+        recommendations={user.recommendations.nutrition}
+      />
+    );
+  };
+
+  const renderRisksTab = () => {
+    const riskAssessment = user.recommendations.nutrition?.riskAssessment;
+    const actionPriorities = user.recommendations.nutrition?.actionPriorities;
+    const monitoringPlan = user.recommendations.nutrition?.monitoringPlan;
+    
+    if (!riskAssessment) {
+      return (
+        <div className="text-center py-12">
+          <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">No risk assessment data available yet. Complete your genetic analysis first.</p>
+        </div>
+      );
+    }
+
+    return (
+      <RiskVisualization 
+        riskAssessment={riskAssessment}
+        actionPriorities={actionPriorities}
+        monitoringPlan={monitoringPlan}
+      />
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -296,6 +408,8 @@ const Recommendations = () => {
         {activeTab === 'nutrition' && renderNutritionTab()}
         {activeTab === 'fitness' && renderFitnessTab()}
         {activeTab === 'wellness' && renderWellnessTab()}
+        {activeTab === 'genetics' && renderGeneticsTab()}
+        {activeTab === 'risks' && renderRisksTab()}
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { Upload, FileText, AlertCircle, CheckCircle, Loader, Dna } from 'lucide-react';
 import { AIService } from '../services/aiService';
+import { GeneticAnalysisService } from '../services/geneticAnalysisService';
+import { RiskAssessmentService } from '../services/riskAssessmentService';
 import { GeneticAnalysisLoader, LoadingButton } from '../components/LoadingStates';
 import { FloatingInput, FloatingSelect, FileUpload, StepIndicator } from '../components/FormComponents';
 import { useFormValidation, validateRequired, validateAge, validateWeight, validateHeight } from '../components/ValidationMessage';
@@ -65,7 +67,11 @@ const Analysis = () => {
       // Update user health profile
       updateUser({ healthProfile });
 
-      // Generate AI recommendations
+      // Validate genetic data first
+      const validation = GeneticAnalysisService.validateGeneticData(user.geneticData);
+      console.log('Genetic data validation:', validation);
+
+      // Generate comprehensive genetic analysis and AI recommendations
       const [nutritionRecs, fitnessRecs, stressSleepRecs] = await Promise.all([
         AIService.generateNutritionRecommendations(user.geneticData, healthProfile),
         AIService.generateFitnessRecommendations(user.geneticData, healthProfile),
@@ -76,6 +82,13 @@ const Analysis = () => {
       addRecommendations('nutrition', nutritionRecs);
       addRecommendations('fitness', fitnessRecs);
       addRecommendations('stressSleep', stressSleepRecs);
+
+      // Log analysis results for debugging
+      console.log('Analysis complete:', {
+        nutrition: nutritionRecs,
+        fitness: fitnessRecs,
+        stressSleep: stressSleepRecs
+      });
 
       setStep(4); // Analysis complete
     } catch (error) {
